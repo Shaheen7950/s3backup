@@ -7,10 +7,8 @@ def encrypt(text, passphrase):
     header = b'S3BK' + bytes([1,15,8,1])
     salt = os.urandom(16)
     nonce = os.urandom(12)
-    kdf = Scrypt(salt=salt, length =32, n=2**15, r=8, p=1)
-    key = kdf.derive(passphrase.encode())
-    aesgcm = AESGCM(key)
-    cipher = aesgcm.encrypt(nonce, text, header)
+    key = Scrypt(salt=salt, length =32, n=2**15, r=8, p=1).derive(passphrase.encode())
+    cipher = AESGCM(key).encrypt(nonce, text, header)
     return header + salt + nonce + cipher
 
 def decrypt(data, passphrase):
